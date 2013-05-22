@@ -4,6 +4,15 @@
   (:use     [clojure.tools.cli :only (cli)]
             [clojure.java.io]))
 
+(def feature-method
+  {:length [(fn [r] (count (:sequence r)))
+            ["length"]]})
+
+(defn evaluate-method [[fnc headers] rs]
+  (cons
+    (cons "id" (map str headers))
+    (map #(list (:id %) (fnc %)) rs)))
+
 (defn read-id [id]
   (string/replace
     (first (string/split id #"\s+"))
@@ -14,10 +23,8 @@
   (map (fn [[id s _ q]] {:id (read-id id) :sequence s :scores q})
        (partition 4 fastq-lines)))
 
-(defn length [r]
-  (count (:sequence r)))
-
 (defn -main [& args]
   (let [[options [feature fastq-file]] (cli args)
-         fastq-lines                   (line-seq (reader fastq-file))]
-    ))
+         rs (reads (line-seq (reader fastq-file)))]
+    (doseq [i (evaluate-method (->> feature keyword feature-method) rs)]
+      (println (string/join "\t" i)))))

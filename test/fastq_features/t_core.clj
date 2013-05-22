@@ -11,7 +11,15 @@
     (reads '("@SRR042334.1" "TGAC" "+SRR042334.1" "hhhh")) =>
         '({:id "SRR042334.1" :scores "hhhh" :sequence "TGAC"})))
 
-(facts "about `length`"
+(facts "about `feature-methods`"
 
-  (fact "returns the length of a read"
-    (length {:id "SRR042334.1" :scores "hhhh" :sequence "TGAC"}) => 4))
+  (facts "about `length`"
+    (fact "returns the length of a read"
+      ((->> feature-method :length first) {:sequence "TGAC"}) => 4))) 
+
+(facts "about `evaluate-method`"
+  (fact "returns a sequence of results with header"
+    (evaluate-method (feature-method :length) '({:id "read.1" :sequence "ATGC"})) => 
+        '(("id" "length") ("read.1" 4))
+        
+        ))
