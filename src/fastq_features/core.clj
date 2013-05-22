@@ -14,6 +14,9 @@
   (map (fn [[id s _ q]] {:id (read-id id) :sequence s :scores q})
        (partition 4 fastq-lines)))
 
+(defn length [r]
+  (count (:sequence r)))
+
 (defn -main [& args]
   (let [[options [feature fastq-file]] (cli args)
          fastq-lines                   (line-seq (reader fastq-file))]
