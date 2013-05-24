@@ -15,11 +15,16 @@
 
   (facts "about `length`"
     (fact "returns the length of a read"
-      ((->> feature-method :length first) {:sequence "TGAC"}) => 4))) 
+      ((feature-methods :length) {:sequence "TGAC"}) => 4)))
 
-(facts "about `evaluate-method`"
-  (fact "returns a sequence of results with header"
-    (evaluate-method (feature-method :length) '({:id "read.1" :sequence "ATGC"})) => 
-        '(("id" "length") ("read.1" 4))
-        
-        ))
+(facts "about `evaluate-methods`"
+  (fact "evaluates methods and returns a sequence of results"
+    (let [dummy-methods {:a (fn [r] :dummy.1)
+                         :b (fn [r] :dummy.2)}
+          dummy-reads   [{:id "read.1"} {:id "read.2"}]]
+
+      (evaluate-methods dummy-methods dummy-reads) =>
+      '(["read.1" "a" :dummy.1]
+        ["read.1" "b" :dummy.2]
+        ["read.2" "a" :dummy.1]
+        ["read.2" "b" :dummy.2]))))
